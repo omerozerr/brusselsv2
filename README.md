@@ -66,7 +66,7 @@ npm start
 #### As a Developer
 
 -   Connect your wallet to the platform (this is required to get your builder score from your talent passport)
--   Register and start bidding on projects.
+-   Register and start creating your job offers.
 
 ### Managing Your Profile
 
@@ -76,7 +76,7 @@ npm start
 
 #### Developers:
 
--   Update your profile, submit proposals, and manage your job dashboard.
+-   Update your profile, submit offers, and manage your job dashboard.
 
 ### Payments
 
