@@ -1,38 +1,101 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Threer: Decentralized Freelancing Platform
 
-## Getting Started
+## Overview
 
-First, run the development server:
+Welcome to our decentralized freelancing platform, designed to bridge the gap between Web2 clients and Web3 freelancers. This project, akin to Upwork, leverages blockchain technology to offer a more secure, transparent, and efficient freelancing environment. With features like Wallet Connect's social login and Talent Protocol Passport, we ensure a seamless onboarding experience and fair evaluation for all users.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Problem Statement
+
+Traditional freelancing platforms often suffer from several issues, such as biased evaluations, delayed payments, and centralization risks. Freelancers are rated subjectively, payments can be slow and insecure, and users have to trust a central authority with their data and funds.
+
+## Solution
+
+Our platform solves these problems by creating a decentralized working environment on the blockchain. Key solutions include:
+
+Easy Onboarding: Clients can log in via Wallet Connect's social login, making the transition to Web3 effortless.
+Transparent Evaluations: Utilizing Talent Protocol Passport, freelancers receive builder scores based on their job performance, ensuring unbiased evaluations.
+Faster Payments: Payments are processed on-chain, ensuring they are fast, secure, and trustless.
+
+## Features
+
+Wallet Connect Social Login: Simplifies the login process for Web2 clients, promoting easy adaptation to Web3.
+On-ramp with Coinbase: Clients can easily convert their fiat to crypto using Coinbase, facilitating smooth transactions.
+Dual Registration: Users can register either as clients or developers.
+Talent Protocol Passport: A decentralized scoring system that objectively rates freelancers based on their performance.
+Trustless Transactions: Payments are fast and secure, leveraging blockchain technology to ensure trustless transactions.
+
+## Installation
+
+### Prerequisites
+
+-   Node.js and npm installed
+-   Git installed
+
+### Steps
+
+1 - Clone the repo
+
+```
+git clone https://github.com/omerozerr/threer
+cd threer
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2 - Install dependencies
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+npm install
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```
 
-## Learn More
+3 - Run the project
 
-To learn more about Next.js, take a look at the following resources:
+```
+npm start
 
--   [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
--   [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Usage
 
-## Deploy on Vercel
+### Logging In
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+#### As a Client
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+-   Use Wallet Connect to log in with your social media account (Google, Twitter etc.) or use your own web3 wallet if you have any
+-   Onboard easily using Coinbase for fiat-to-crypto conversion.
 
-trustless system with talent passport and their scores. Differentiate this with web2.
+#### As a Developer
+
+-   Connect your wallet to the platform (this is required to get your builder score from your talent passport)
+-   Register and start bidding on projects.
+
+### Managing Your Profile
+
+#### Clients:
+
+-   Register with your telegram username so that developers can reach you
+
+#### Developers:
+
+-   Update your profile, submit proposals, and manage your job dashboard.
+
+### Payments
+
+-   Payments are processed instantly on-chain using ETH, ensuring quick and secure transactions.
+
+## Smart Contract Information
+
+-   Contract Address: 0x9f874922ED78A4dCf7DfdD3a0A7CE636e8E7AC8f on Base
+-   Blockchain Explorer: Use [Blockscout](https://base.blockscout.com/address/0x9f874922ED78A4dCf7DfdD3a0A7CE636e8E7AC8f) to explore contract details.
+
+## Contributing
+
+-   We welcome contributions from the community. Please fork the repository and create a pull request with your changes.
+
+## License
+
+-   This project is licensed under the MIT License.
+
+## Contact
+
+-   For any queries or support, please contact "omerozerr" on Telegram.
+    Thank you for using Threer.
