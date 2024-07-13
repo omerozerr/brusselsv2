@@ -25,6 +25,9 @@ const Header = () => {
 
     return (
         <header className={styles.header}>
+            <div className={styles.logoContainer}>
+                <img src="/DevChainBg.png" alt="Logo" className={styles.logo} />
+            </div>
             <nav>
                 <ul className={styles.nav}>
                     <li className={styles.navItem}>
@@ -51,7 +54,9 @@ const Header = () => {
                 </ul>
             </nav>
             {isConnected ? (
-                <button onClick={() => disconnect()}>Disconnect</button>
+                <button className={styles.button} onClick={() => disconnect()}>
+                    Disconnect
+                </button>
             ) : (
                 <p></p>
             )}

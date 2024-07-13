@@ -6,13 +6,33 @@ import { readContract, writeContract } from "@wagmi/core";
 import { config } from "@/config";
 import abi from "@/components/abi";
 import Link from "next/link";
+import { parseEther, formatEther } from "viem";
+import styles from "./Browse.module.css"; // Import the CSS module
 
-const contractAddress = "0xC5B5827B55F31D17018BbC52B6bb123f7615B68F";
+const contractAddress = "0x12D1e124F8C2f20FE9b98CA91B9a51f71A8792E9";
 
 export default function Browse() {
     const { address, isConnected } = useAccount();
     const [offerings, setOfferings] = useState<any[]>([]);
     const [isClient, setIsClient] = useState(false);
+    const [builderScores, setBuilderScores] = useState<{
+        [key: string]: number;
+    }>({});
+
+    // Function to convert Ether to Wei using viem
+    const convertEtherToWei = (etherValue: string): bigint => {
+        return parseEther(etherValue);
+    };
+
+    // Function to convert a string to BigInt
+
+    const stringToBigInt = (value: string): bigint => {
+        return BigInt(value);
+    };
+
+    const convertWeiToEther = (weiValue: bigint): string => {
+        return formatEther(weiValue);
+    };
 
     useEffect(() => {
         fetchAllOfferings();
@@ -20,12 +40,44 @@ export default function Browse() {
         console.log(offerings);
     }, [address]);
 
+    useEffect(() => {
+        if (offerings.length > 0) {
+            fetchBuilderScores();
+        }
+    }, [offerings]);
+
+    const fetchBuilderScores = async () => {
+        const scores: { [key: string]: number } = {};
+        for (const offering of offerings) {
+            try {
+                const developer = offering.developer;
+                if (!scores[developer]) {
+                    const result = await readContract(config, {
+                        abi,
+                        address: contractAddress,
+                        functionName: "developers",
+                        args: [developer],
+                        chainId: 84532,
+                    });
+                    scores[developer] = result[3];
+                }
+            } catch (error) {
+                console.error(
+                    `Error fetching builder score for ${offering.developer}:`,
+                    error
+                );
+            }
+        }
+        setBuilderScores(scores);
+    };
+
     const fetchAllOfferings = async () => {
         try {
             const allOfferings = await readContract(config, {
                 abi,
                 address: contractAddress,
                 functionName: "getAllOfferings",
+                chainId: 84532,
             });
             setOfferings(Array.from(allOfferings)); // Convert readonly array to mutable array
         } catch (error) {
@@ -41,11 +93,10 @@ export default function Browse() {
                 address: contractAddress,
                 functionName: "clients",
                 args: [address],
-                chainId: 11155111,
             });
             console.log(result);
 
-            setIsClient(result[1]);
+            setIsClient(result[2]);
         } catch (error) {
             console.error("Error checking client registration:", error);
         }
@@ -65,7 +116,6 @@ export default function Browse() {
                 functionName: "purchaseOffering",
                 args: [id],
                 value: price,
-                chainId: 11155111,
             });
             console.log("Offering purchased:", result);
             // Update offerings list or perform additional actions after purchase
@@ -76,37 +126,63 @@ export default function Browse() {
 
     return (
         <div>
-            <h1>Browse Offerings</h1>
+            <h1 className={styles.header}>Browse Offerings</h1>
             {isConnected ? (
                 <p></p>
             ) : (
-                <p>Connect your wallet to be able to buy offerings</p>
+                <p className={styles.text}>
+                    {" "}
+                    Connect your wallet to be able to buy offerings
+                </p>
             )}
-            {offerings.length > 0 ? (
-                offerings.map((offering, index) => (
-                    <div key={index}>
-                        <h3>{offering.title}</h3>
-                        <p>{offering.description}</p>
-                        <p>Price: {offering.price.toString()}</p>
-                        <p>Status: {offering.status}</p>
-                        <p>Builder: {offering.developer}</p>
-                        <Link href={`/devprofile/${offering.developer}`}>
-                            View Developer Profile
-                        </Link>
-                        {isClient && offering.status == 0 && isConnected && (
-                            <button
-                                onClick={() =>
-                                    buyOffering(offering.id, offering.price)
-                                }
+            <div className={styles.container}>
+                {offerings.length > 0 ? (
+                    offerings.map((offering, index) => (
+                        <div key={index} className={styles.offering}>
+                            <h3>{offering.title}</h3>
+                            <p>{offering.description}</p>
+                            <p>
+                                Price: {convertWeiToEther(offering.price)} ETH
+                            </p>
+                            <p>Status: {offering.status}</p>
+                            <p>Builder: {offering.developer}</p>
+                            {builderScores[offering.developer] !==
+                                undefined && (
+                                <p>
+                                    Builder Score:{" "}
+                                    {builderScores[offering.developer]}
+                                </p>
+                            )}
+                            {offering.status === 1 || offering.status === 2 ? (
+                                <p>Client: {offering.client}</p>
+                            ) : null}
+                            <Link
+                                className={styles.button}
+                                href={`/devprofile/${offering.developer}`}
                             >
-                                Buy
-                            </button>
-                        )}
-                    </div>
-                ))
-            ) : (
-                <p>No offerings available.</p>
-            )}
+                                View Developer Profile
+                            </Link>
+                            {isClient &&
+                                offering.status == 0 &&
+                                isConnected && (
+                                    <button
+                                        className={styles.button}
+                                        onClick={() =>
+                                            buyOffering(
+                                                offering.id,
+                                                offering.price
+                                            )
+                                        }
+                                    >
+                                        Buy
+                                    </button>
+                                )}
+                        </div>
+                    ))
+                ) : (
+                    <p>No offerings available.</p>
+                )}
+            </div>
         </div>
     );
 }
