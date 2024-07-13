@@ -2,7 +2,7 @@
 
 ## Overview
 
-Welcome to our decentralized freelancing platform, designed to bridge the gap between Web2 clients and Web3 freelancers. This project, akin to Upwork, leverages blockchain technology to offer a more secure, transparent, and efficient freelancing environment. With features like Wallet Connect's social login and Talent Protocol Passport, we ensure a seamless onboarding experience and fair evaluation for all users.
+Welcome to our Threer, designed to bridge the gap between Web2 clients and Web3 freelancers. This project, akin to Upwork, leverages blockchain technology to offer a more secure, transparent, and efficient freelancing environment. With features like Wallet Connect's social login and Talent Protocol Passport, we ensure a seamless onboarding experience and fair evaluation for all users.
 
 ## Problem Statement
 
@@ -12,17 +12,17 @@ Traditional freelancing platforms often suffer from several issues, such as bias
 
 Our platform solves these problems by creating a decentralized working environment on the blockchain. Key solutions include:
 
-Easy Onboarding: Clients can log in via Wallet Connect's social login, making the transition to Web3 effortless.
-Transparent Evaluations: Utilizing Talent Protocol Passport, freelancers receive builder scores based on their job performance, ensuring unbiased evaluations.
-Faster Payments: Payments are processed on-chain, ensuring they are fast, secure, and trustless.
+-   Easy Onboarding: Clients can log in via Wallet Connect's social login, making the transition to Web3 effortless.
+-   Transparent Evaluations: Utilizing Talent Protocol Passport, freelancers receive builder scores based on their oncahin performance, ensuring unbiased evaluations.
+-   Faster Payments: Payments are processed on-chain, ensuring they are fast, secure, and trustless.
 
 ## Features
 
-Wallet Connect Social Login: Simplifies the login process for Web2 clients, promoting easy adaptation to Web3.
-On-ramp with Coinbase: Clients can easily convert their fiat to crypto using Coinbase, facilitating smooth transactions.
-Dual Registration: Users can register either as clients or developers.
-Talent Protocol Passport: A decentralized scoring system that objectively rates freelancers based on their performance.
-Trustless Transactions: Payments are fast and secure, leveraging blockchain technology to ensure trustless transactions.
+-   Wallet Connect Social Login: Simplifies the login process for Web2 clients, promoting easy adaptation to Web3.
+-   On-ramp with Coinbase: Clients can easily convert their fiat to crypto using Coinbase, facilitating smooth transactions.
+-   Dual Registration: Users can register either as clients or developers.
+-   Talent Protocol Passport: A decentralized scoring system that objectively rates freelancers based on their performance.
+-   Trustless Transactions: Payments are fast and secure, leveraging blockchain technology to ensure trustless transactions.
 
 ## Installation
 
