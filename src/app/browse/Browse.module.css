@@ -59,5 +59,20 @@
 }
 
 .text{
-    color:black
+    color:black;
+    text-align: center;
+    
 }
+
+.link {
+    color: #0070f3;
+    text-decoration: underline;
+    cursor: pointer;
+    margin-top: 10px;
+    display: inline-block;
+}
+.link:hover {
+    color: #005bb5;
+}
+
+

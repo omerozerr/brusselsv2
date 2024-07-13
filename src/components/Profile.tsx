@@ -9,7 +9,7 @@ import abi from "./abi";
 import { parseEther, formatEther } from "viem";
 import styles from "./Profile.module.css"; // Import the CSS module
 
-const contractAddress = "0x12D1e124F8C2f20FE9b98CA91B9a51f71A8792E9";
+const contractAddress = "0x9f874922ED78A4dCf7DfdD3a0A7CE636e8E7AC8f";
 
 export default function Profile({ role }: { role: "client" | "developer" }) {
     const { open } = useWeb3Modal();
@@ -26,6 +26,36 @@ export default function Profile({ role }: { role: "client" | "developer" }) {
     const [jobDescription, setJobDescription] = useState("");
     const [jobPrice, setJobPrice] = useState<string>("");
     const [offerings, setOfferings] = useState<any[]>([]); // State to store offerings
+
+    const [purchasedOffers, setPurchasedOffers] = useState<any[]>([]); // State to store purchased offerings
+
+    const [updateDevTxHash, setUpdateDevTxHash] = useState<string | null>(null);
+    const [updateClientTxHash, setUpdateClientTxHash] = useState<string | null>(
+        null
+    );
+    const [registerDevTxHash, setRegisterDevTxHash] = useState<string | null>(
+        null
+    );
+    const [registerClientTxHash, setRegisterClientTxHash] = useState<
+        string | null
+    >(null);
+    const [createJobTxHash, setCreateJobTxHash] = useState<string | null>(null);
+    const [markcompletedTxHash, setmarkcompletedTxHash] = useState<
+        string | null
+    >(null);
+
+    const getStatusText = (status: number): string => {
+        switch (status) {
+            case 0:
+                return "Open";
+            case 1:
+                return "In Progress";
+            case 2:
+                return "Completed";
+            default:
+                return "Unknown";
+        }
+    };
 
     const convertEtherToWei = (etherValue: string): bigint => {
         return parseEther(etherValue);
@@ -49,8 +79,43 @@ export default function Profile({ role }: { role: "client" | "developer" }) {
     useEffect(() => {
         if (isRegistered && role === "developer") {
             fetchDeveloperOfferings();
+        } else if (isRegistered && role === "client") {
+            fetchClientPurchases();
         }
     }, [isRegistered, role]);
+
+    const fetchClientPurchases = async () => {
+        if (!address) return; // Added check for address
+        try {
+            console.log("checking purchases");
+            const purchaseIds = await readContract(config, {
+                abi,
+                address: contractAddress,
+                functionName: "getClientPurchases",
+                args: [address],
+                chainId: 8453,
+            });
+            console.log(purchaseIds);
+
+            const purchaseDetails = await Promise.all(
+                purchaseIds.map(async (id: bigint) => {
+                    const purchase = await readContract(config, {
+                        abi,
+                        address: contractAddress,
+                        functionName: "offerings",
+                        args: [id],
+                        chainId: 8453,
+                    });
+                    return purchase;
+                })
+            );
+            console.log(purchaseDetails);
+
+            setPurchasedOffers(purchaseDetails);
+        } catch (error) {
+            console.error("Error fetching client purchases:", error);
+        }
+    };
 
     const fetchBuilderScore = async (walletAddress: string) => {
         try {
@@ -84,6 +149,7 @@ export default function Profile({ role }: { role: "client" | "developer" }) {
                     address: contractAddress,
                     functionName: "developers",
                     args: [address],
+                    chainId: 8453,
                 });
                 console.log(result);
                 setName(result[1]);
@@ -96,6 +162,7 @@ export default function Profile({ role }: { role: "client" | "developer" }) {
                     address: contractAddress,
                     functionName: "clients",
                     args: [address],
+                    chainId: 8453,
                 });
                 console.log(result);
                 setTelegramHandle(result[1]);
@@ -113,8 +180,10 @@ export default function Profile({ role }: { role: "client" | "developer" }) {
                 address: contractAddress,
                 functionName: "registerDeveloper",
                 args: [name, bio, builderScore, telegramHandle],
+                chainId: 8453,
             });
             setIsRegistered(true);
+            setRegisterDevTxHash(result); // Capture transaction hash
         } catch (error) {
             console.error("Error registering developer:", error);
         }
@@ -127,8 +196,10 @@ export default function Profile({ role }: { role: "client" | "developer" }) {
                 address: contractAddress,
                 functionName: "registerClient",
                 args: [telegramHandle],
+                chainId: 8453,
             });
             setIsRegistered(true);
+            setRegisterClientTxHash(result); // Capture transaction hash
         } catch (error) {
             console.error("Error registering client:", error);
         }
@@ -141,8 +212,10 @@ export default function Profile({ role }: { role: "client" | "developer" }) {
                 address: contractAddress,
                 functionName: "updateDeveloperProfile",
                 args: [name, bio, builderScore, telegramHandle],
+                chainId: 8453,
             });
             console.log("Developer profile updated:", result);
+            setUpdateDevTxHash(result); // Capture transaction hash
         } catch (error) {
             console.error("Error updating developer profile:", error);
         }
@@ -155,8 +228,10 @@ export default function Profile({ role }: { role: "client" | "developer" }) {
                 address: contractAddress,
                 functionName: "updateClientProfile",
                 args: [telegramHandle],
+                chainId: 8453,
             });
             console.log("Client profile updated:", result);
+            setUpdateClientTxHash(result); // Capture transaction hash
         } catch (error) {
             console.error("Error updating client profile:", error);
         }
@@ -173,9 +248,10 @@ export default function Profile({ role }: { role: "client" | "developer" }) {
                 address: contractAddress,
                 functionName: "createOffering",
                 args: [jobTitle, jobDescription, convertEtherToWei(jobPrice)],
-                chainId: 84532,
+                chainId: 8453,
             });
             console.log("Job offering created:", result);
+            setCreateJobTxHash(result); // Capture transaction hash
             fetchDeveloperOfferings();
             // Reset form
             setJobTitle("");
@@ -195,6 +271,7 @@ export default function Profile({ role }: { role: "client" | "developer" }) {
                 address: contractAddress,
                 functionName: "getDeveloperOfferings",
                 args: [address],
+                chainId: 8453,
             });
             console.log(offeringIds);
 
@@ -205,6 +282,7 @@ export default function Profile({ role }: { role: "client" | "developer" }) {
                         address: contractAddress,
                         functionName: "offerings",
                         args: [id],
+                        chainId: 8453,
                     });
                     return offering;
                 })
@@ -224,10 +302,11 @@ export default function Profile({ role }: { role: "client" | "developer" }) {
                 address: contractAddress,
                 functionName: "markOfferingCompleted",
                 args: [id],
-                chainId: 84532, // Ensure the chain ID is set correctly for Base Sepolia
+                chainId: 8453,
             });
             console.log("Offering marked as completed:", result);
             fetchDeveloperOfferings(); // Refresh the offerings
+            setmarkcompletedTxHash(result); // Capture transaction hash
         } catch (error) {
             console.error("Error marking offering as completed:", error);
         }
@@ -278,6 +357,19 @@ export default function Profile({ role }: { role: "client" | "developer" }) {
                             >
                                 Update Profile
                             </button>
+                            <br></br>
+                            <br></br>
+
+                            {updateDevTxHash && (
+                                <a
+                                    href={`https://base.blockscout.com/tx/${updateDevTxHash}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.link}
+                                >
+                                    See the tx on Blockscout Explorer
+                                </a>
+                            )}
                         </div>
                         <div className={styles["profile-section"]}>
                             <h4>Create Job Offering</h4>
@@ -310,6 +402,18 @@ export default function Profile({ role }: { role: "client" | "developer" }) {
                             >
                                 Create Job Offering
                             </button>
+                            <br></br>
+                            <br></br>
+                            {createJobTxHash && (
+                                <a
+                                    href={`https://base.blockscout.com/tx/${createJobTxHash}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.link}
+                                >
+                                    See the tx on Blockscout Explorer
+                                </a>
+                            )}
                         </div>
                         <div className={styles["profile-section"]}>
                             <h4>My Job Offerings</h4>
@@ -325,18 +429,36 @@ export default function Profile({ role }: { role: "client" | "developer" }) {
                                             Price:{" "}
                                             {convertWeiToEther(offering[5])} ETH
                                         </p>
-                                        <p>Status: {offering[6]}</p>
+                                        <p>
+                                            Status: {getStatusText(offering[6])}
+                                        </p>
                                         {offering[6] == 1 && (
-                                            <button
-                                                onClick={() =>
-                                                    markOfferingCompleted(
-                                                        offering[0]
-                                                    )
-                                                }
-                                                className={styles.button}
-                                            >
-                                                Mark as Completed
-                                            </button>
+                                            <div>
+                                                <button
+                                                    onClick={() =>
+                                                        markOfferingCompleted(
+                                                            offering[0]
+                                                        )
+                                                    }
+                                                    className={styles.button}
+                                                >
+                                                    Mark as Completed
+                                                </button>
+                                                <br></br>
+                                                <br></br>
+
+                                                {markcompletedTxHash && (
+                                                    <a
+                                                        href={`https://base.blockscout.com/tx/${markcompletedTxHash}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className={styles.link}
+                                                    >
+                                                        See the tx on Blockscout
+                                                        Explorer
+                                                    </a>
+                                                )}
+                                            </div>
                                         )}
                                     </div>
                                 ))
@@ -350,6 +472,8 @@ export default function Profile({ role }: { role: "client" | "developer" }) {
                         <h3>Client Profile</h3>
                         <div>Connected Wallet Address: {address}</div>
                         <div>Telegram Handle: {telegramHandle}</div>
+                        <br></br>
+
                         <div>
                             <h4>Edit Profile</h4>
                             <input
@@ -361,13 +485,51 @@ export default function Profile({ role }: { role: "client" | "developer" }) {
                                 }
                                 className={styles.input}
                             />
-
                             <button
                                 onClick={updateClientProfile}
                                 className={styles.button}
                             >
                                 Update Profile
                             </button>
+                            <br></br>
+                            <br></br>
+
+                            {updateClientTxHash && (
+                                <a
+                                    href={`https://base.blockscout.com/tx/${updateClientTxHash}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.link}
+                                >
+                                    See the tx on Blockscout Explorer
+                                </a>
+                            )}
+                        </div>
+                        <div>
+                            <h4>Purchased Offers</h4>
+                            {purchasedOffers.length > 0 ? (
+                                purchasedOffers.map((offering, index) => (
+                                    <div
+                                        key={index}
+                                        className={styles.offering}
+                                    >
+                                        <h3>{offering[3]}</h3>
+                                        <p>{offering[4]}</p>
+                                        <p>
+                                            Price:{" "}
+                                            {convertWeiToEther(
+                                                offering[5].toString()
+                                            )}
+                                        </p>
+                                        <p>
+                                            Status: {getStatusText(offering[6])}
+                                        </p>
+                                        <p>Builder: {offering[1]}</p>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>No purchased offers found.</p>
+                            )}
                         </div>
                     </div>
                 )
@@ -406,6 +568,19 @@ export default function Profile({ role }: { role: "client" | "developer" }) {
                             >
                                 Register
                             </button>
+                            <br></br>
+                            <br></br>
+
+                            {registerDevTxHash && (
+                                <a
+                                    href={`https://base.blockscout.com/tx/${registerDevTxHash}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.link}
+                                >
+                                    See the tx on Blockscout Explorer
+                                </a>
+                            )}
                         </div>
                     ) : (
                         <div>
@@ -426,6 +601,19 @@ export default function Profile({ role }: { role: "client" | "developer" }) {
                             >
                                 Register
                             </button>
+                            <br></br>
+                            <br></br>
+
+                            {registerClientTxHash && (
+                                <a
+                                    href={`https://base.blockscout.com/tx/${registerClientTxHash}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.link}
+                                >
+                                    See the tx on Blockscout Explorer
+                                </a>
+                            )}
                         </div>
                     )}
                 </div>

@@ -9,7 +9,7 @@ import Link from "next/link";
 import { parseEther, formatEther } from "viem";
 import styles from "./Browse.module.css"; // Import the CSS module
 
-const contractAddress = "0x12D1e124F8C2f20FE9b98CA91B9a51f71A8792E9";
+const contractAddress = "0x9f874922ED78A4dCf7DfdD3a0A7CE636e8E7AC8f";
 
 export default function Browse() {
     const { address, isConnected } = useAccount();
@@ -18,6 +18,21 @@ export default function Browse() {
     const [builderScores, setBuilderScores] = useState<{
         [key: string]: number;
     }>({});
+
+    const [transactionHash, setTransactionHash] = useState<string | null>(null);
+
+    const getStatusText = (status: number): string => {
+        switch (status) {
+            case 0:
+                return "Open";
+            case 1:
+                return "In Progress";
+            case 2:
+                return "Completed";
+            default:
+                return "Unknown";
+        }
+    };
 
     // Function to convert Ether to Wei using viem
     const convertEtherToWei = (etherValue: string): bigint => {
@@ -57,7 +72,7 @@ export default function Browse() {
                         address: contractAddress,
                         functionName: "developers",
                         args: [developer],
-                        chainId: 84532,
+                        chainId: 8453,
                     });
                     scores[developer] = result[3];
                 }
@@ -77,7 +92,7 @@ export default function Browse() {
                 abi,
                 address: contractAddress,
                 functionName: "getAllOfferings",
-                chainId: 84532,
+                chainId: 8453,
             });
             setOfferings(Array.from(allOfferings)); // Convert readonly array to mutable array
         } catch (error) {
@@ -93,6 +108,7 @@ export default function Browse() {
                 address: contractAddress,
                 functionName: "clients",
                 args: [address],
+                chainId: 8453,
             });
             console.log(result);
 
@@ -116,8 +132,10 @@ export default function Browse() {
                 functionName: "purchaseOffering",
                 args: [id],
                 value: price,
+                chainId: 8453,
             });
             console.log("Offering purchased:", result);
+            setTransactionHash(result); // Capture transaction hash
             // Update offerings list or perform additional actions after purchase
         } catch (error) {
             console.error("Error purchasing offering:", error);
@@ -144,7 +162,7 @@ export default function Browse() {
                             <p>
                                 Price: {convertWeiToEther(offering.price)} ETH
                             </p>
-                            <p>Status: {offering.status}</p>
+                            <p>Status: {getStatusText(offering.status)}</p>
                             <p>Builder: {offering.developer}</p>
                             {builderScores[offering.developer] !==
                                 undefined && (
@@ -153,34 +171,56 @@ export default function Browse() {
                                     {builderScores[offering.developer]}
                                 </p>
                             )}
+
                             {offering.status === 1 || offering.status === 2 ? (
                                 <p>Client: {offering.client}</p>
                             ) : null}
+                            <br></br>
+
                             <Link
                                 className={styles.button}
                                 href={`/devprofile/${offering.developer}`}
                             >
                                 View Developer Profile
                             </Link>
+                            <br></br>
+                            <br></br>
+
                             {isClient &&
                                 offering.status == 0 &&
                                 isConnected && (
-                                    <button
-                                        className={styles.button}
-                                        onClick={() =>
-                                            buyOffering(
-                                                offering.id,
-                                                offering.price
-                                            )
-                                        }
-                                    >
-                                        Buy
-                                    </button>
+                                    <>
+                                        <button
+                                            className={styles.button}
+                                            onClick={() =>
+                                                buyOffering(
+                                                    offering.id,
+                                                    offering.price
+                                                )
+                                            }
+                                        >
+                                            Buy
+                                        </button>
+                                        <br></br>
+                                        <br></br>
+
+                                        {transactionHash && (
+                                            <a
+                                                href={`https://base.blockscout.com/tx/${transactionHash}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className={styles.link}
+                                            >
+                                                See the tx on Blockscout
+                                                Explorer
+                                            </a>
+                                        )}
+                                    </>
                                 )}
                         </div>
                     ))
                 ) : (
-                    <p>No offerings available.</p>
+                    <p className={styles.text}>No offerings available.</p>
                 )}
             </div>
         </div>
