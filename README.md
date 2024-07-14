@@ -68,15 +68,48 @@ npm start
 -   Connect your wallet to the platform (this is required to get your builder score from your talent passport)
 -   Register and start creating your job offers.
 
-### Managing Your Profile
+### Tabs
 
-#### Clients:
+#### Browse
+
+-   See the all offers created
+-   You should be registered as client to buy offers
+
+#### Client profile:
 
 -   Register with your telegram username so that developers can reach you
+-   View and edit your profile
+-   See the offers you bought and their details
 
-#### Developers:
+#### Developer profile:
 
--   Update your profile, submit offers, and manage your job dashboard.
+-   View and edit your profile
+-   Create your job offerings
+-   See the offers you created and their details
+
+#### Examine the others profiles
+
+##### Client Profiles
+
+-   You can examine a client's profile by going to:
+
+```
+https://threer.vercel.app/clientprofile/{walletaddress}
+```
+
+-   You can see the contact and purchased offers of the client
+
+##### Developer Profiles
+
+-   You can examine a developer's profile by going to:
+
+```
+https://threer.vercel.app/devprofile/{walletaddress}
+```
+
+-   You can see the telegram handle and builder score of the developer
+-   Link to farcaster
+-   Link to talent passport
 
 ### Payments
 
