@@ -110,6 +110,7 @@ https://threer.vercel.app/devprofile/{walletaddress}
 -   You can see the telegram handle and builder score of the developer
 -   Link to farcaster
 -   Link to talent passport
+-   All offerings created by developer
 
 ### Payments
 
