@@ -22,8 +22,8 @@ export default function Home() {
                         details, and track their purchased offerings. Both
                         clients and developers can update their profiles with
                         relevant information. Get started by connecting your
-                        wallet and navigating through our intuitive interface to
-                        explore and manage job offerings efficiently.
+                        wallet and navigating through our tabs to explore and
+                        manage job offerings.
                     </p>
                 </div>
                 <div className={styles.logoSection}>
